@@ -21,61 +21,53 @@ const { NotImplementedError } = require("../extensions/index.js");
  */
 
 class VigenereCipheringMachine {
-  constructor(isDirect = true) {
-    this.isDirect = isDirect;
+  constructor(direct = true) {
+    this.direct = direct;
   }
 
-  encrypt(message, key) {
-    if (!message || !key) {
-      throw new Error("Message and key are required");
-    }
-
-    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    let result = "";
-    let keyIndex = 0;
-
-    for (let i = 0; i < message.length; i++) {
-      const char = message[i].toUpperCase();
-      if (alphabet.includes(char)) {
-        const keyChar = key[keyIndex % key.length].toUpperCase();
-        const shift = alphabet.indexOf(keyChar);
-        const encryptedChar =
-          alphabet[(alphabet.indexOf(char) + shift) % alphabet.length];
-        result += encryptedChar;
-        keyIndex++;
-      } else {
-        result += char;
-      }
-    }
-
-    return this.isDirect ? result : result.split("").reverse().join("");
+  encrypt(str, key) {
+    return this.code(str, key, "encrypt");
   }
 
-  decrypt(encryptedMessage, key) {
-    if (!encryptedMessage || !key) {
-      throw new Error("Encrypted message and key are required");
-    }
+  decrypt(str, key) {
+    return this.code(str, key, "decrypt");
+  }
 
-    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    let result = "";
-    let keyIndex = 0;
-
-    for (let i = 0; i < encryptedMessage.length; i++) {
-      const char = encryptedMessage[i].toUpperCase();
-      if (alphabet.includes(char)) {
-        const keyChar = key[keyIndex % key.length].toUpperCase();
-        const shift = alphabet.indexOf(keyChar);
-        const decryptedCharIndex =
-          (alphabet.indexOf(char) - shift + alphabet.length) % alphabet.length;
-        const decryptedChar = alphabet[decryptedCharIndex];
-        result += decryptedChar;
-        keyIndex++;
+  code(str, key, type) {
+    if (!str || !key || !type) throw Error("Incorrect arguments!");
+    str = str.toUpperCase();
+    key = key.toUpperCase();
+    const arr = [];
+    for (let i = 0, j = 0; i < str.length; i++) {
+      if (str[i].match(/[A-Z]/)) {
+        if (type === "decrypt") {
+          arr.push(
+            String.fromCharCode(
+              ((str[i].charCodeAt(0) -
+                "A".charCodeAt(0) +
+                (26 -
+                  (key[j % key.length].charCodeAt(0) - "A".charCodeAt(0)))) %
+                26) +
+                "A".charCodeAt(0)
+            )
+          );
+        } else {
+          arr.push(
+            String.fromCharCode(
+              ((str[i].charCodeAt(0) -
+                "A".charCodeAt(0) +
+                (key[j % key.length].charCodeAt(0) - "A".charCodeAt(0))) %
+                26) +
+                "A".charCodeAt(0)
+            )
+          );
+        }
+        j++;
       } else {
-        result += char;
+        arr.push(str[i]);
       }
     }
-
-    return this.isDirect ? result : result.split("").reverse().join("");
+    return this.direct ? arr.join("") : arr.reverse().join("");
   }
 }
 

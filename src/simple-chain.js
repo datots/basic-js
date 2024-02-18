@@ -4,48 +4,38 @@ const { NotImplementedError } = require("../extensions/index.js");
  * Implement chainMaker object according to task description
  *
  */
+
 const chainMaker = {
   chain: [],
 
   getLength() {
     return this.chain.length;
   },
-
   addLink(value) {
-    this.chain.push(value === undefined ? "( )" : `( ${value} )`);
+    if (typeof value === "undefined") {
+      this.chain.push(`(  )`);
+    } else {
+      this.chain.push(`( ${value} )`);
+    }
     return this;
   },
-
   removeLink(position) {
-    if (
-      !Number.isInteger(position) ||
-      position <= 0 ||
-      position > this.chain.length
-    ) {
+    if (this.chain[position - 1] === undefined) {
       this.chain = [];
-      throw new Error("Invalid position");
+      throw Error("You can't remove incorrect link!");
+    } else {
+      this.chain.splice(position - 1, 1);
     }
-
-    if (
-      position < 1 ||
-      position > this.chain.length ||
-      !Number.isInteger(position)
-    ) {
-      throw new Error("You can't remove incorrect link!");
-    }
-    this.chain.splice(position - 1, 1);
     return this;
   },
-
   reverseChain() {
     this.chain.reverse();
     return this;
   },
-
   finishChain() {
-    const result = this.chain.join("~~");
-    this.chain = []; // Reset the chain after finishing
-    return result;
+    const finish = this.chain.join("~~");
+    this.chain = [];
+    return finish;
   },
 };
 
