@@ -26,7 +26,9 @@ class VigenereCipheringMachine {
   }
 
   encrypt(message, key) {
-    if (!message || !key) throw new Error("Message and key are required");
+    if (!message || !key) {
+      throw new Error("Message and key are required");
+    }
 
     const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     let result = "";
@@ -50,8 +52,9 @@ class VigenereCipheringMachine {
   }
 
   decrypt(encryptedMessage, key) {
-    if (!encryptedMessage || !key)
+    if (!encryptedMessage || !key) {
       throw new Error("Encrypted message and key are required");
+    }
 
     const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     let result = "";

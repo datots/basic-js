@@ -12,6 +12,10 @@ const { NotImplementedError } = require("../extensions/index.js");
  *
  */
 function getSeason(date) {
+  if (arguments.length === 0) {
+    throw new Error("Argument is required");
+  }
+
   if (!(date instanceof Date) || isNaN(date.getTime())) {
     throw new Error("Invalid date!");
   }
